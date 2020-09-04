@@ -1,5 +1,5 @@
 /*
-   Copyright (c) 2016, The Linux Foundation. All rights reserved.
+   Copyright (c) 2013, The Linux Foundation. All rights reserved.
 
    Redistribution and use in source and binary forms, with or without
    modification, are permitted provided that the following conditions are
@@ -28,56 +28,14 @@
  */
 
 #include <stdlib.h>
-#include <stdio.h>
 
 #include "vendor_init.h"
 #include "property_service.h"
-#include "log.h"
 #include "util.h"
 
-#include "init_msm8974.h"
-
-#define ISMATCH(a, b) (!strncmp((a), (b), PROP_VALUE_MAX))
-
-void gsm_properties()
+void vendor_load_properties()
 {
-    property_set("telephony.lteOnGsmDevice", "1");
-    property_set("ro.telephony.default_network", "9");
-    property_set("ro.telephony.ril.config", "newDialCode");
+	property_set("ro.product.model", "SM-G900FD");
+	property_set("ro.product.name", "klteduos");
+	property_set("ro.product.device", "klte");
 }
-
-void init_target_properties()
-{
-    char platform[PROP_VALUE_MAX];
-    char bootloader[PROP_VALUE_MAX];
-    char device[PROP_VALUE_MAX];
-    char devicename[PROP_VALUE_MAX];
-    int rc;
-
-    rc = property_get("ro.board.platform", platform);
-    if (!rc || !ISMATCH(platform, ANDROID_TARGET))
-        return;
-
-    property_get("ro.bootloader", bootloader);
-
-    if (strstr(bootloader, "G900FD")) {
-        /* klteduosxx */
-        property_set("ro.build.fingerprint", "samsung/klteduosxx/klte:6.0.1/MMB29M/G900FDXXU1CPE1:user/release-keys");
-        property_set("ro.build.description", "klteduosxx-user 6.0.1 MMB29M G900FDXXU1CPE1 release-keys");
-        property_set("ro.product.model", "SM-G900FD");
-        property_set("ro.product.device", "klte");
-        gsm_properties();
-    } else if (strstr(bootloader, "G900MD")) {
-        /* klteduosub */
-        property_set("ro.build.fingerprint", "samsung/klteduosub/klte:5.0/LRX21T/G900MDUBU1BOB2:user/release-keys");
-        property_set("ro.build.description", "klteduosub-user 5.0 LRX21T G900MDUBU1BOB2 release-keys");
-        property_set("ro.product.model", "SM-G900MD");
-        property_set("ro.product.device", "klte");
-        gsm_properties();
-    }
-
-    property_get("ro.product.device", device);
-    strlcpy(devicename, device, sizeof(devicename));
-    INFO("Found bootloader id %s setting build properties for %s device\n", bootloader, devicename);
-}
-
